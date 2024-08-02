@@ -1,16 +1,16 @@
 from pydantic import BaseModel
 from typing import List, Dict
 from prompts.prompts import single_speaker_prompt, multi_speaker_prompt
-from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import os
 from fastapi import HTTPException
-from db.db_util import get_model_name
+# from db.db_util import get_model_name
 import json
 import re
+import google.generativeai as genai
 
 load_dotenv()
-api_key = os.getenv('OPENAI_API_KEY')
+api_key = os.getenv('GOOGLE_API_KEY')
 
 class Utterance(BaseModel):
     start_at: int
@@ -77,15 +77,10 @@ class AnalysisResponse(BaseModel):
 
 class STTModel:
     def __init__(self, api_key):
-        self.client = AsyncOpenAI(api_key=api_key)
-        self.model_name = None
-
-    async def initialize(self):
-        if self.model_name is None:
-            self.model_name = await get_model_name()
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
 
     async def analyze_stt(self, response: STTResponse) -> AnalysisResponse:
-        await self.initialize()
         speakers = {utterance.spk for utterance in response.results.utterances}
         
         if len(speakers) == 1:
@@ -93,28 +88,24 @@ class STTModel:
         else:
             prompt = multi_speaker_prompt
 
-        messages = [{"role": "system", "content": prompt}]
+        messages = [{"role": "user", "parts": prompt}]
         
         for utterance in response.results.utterances:
             if len(speakers) == 1:
-                messages.append({"role": "user", "content": f"I: {utterance.msg}"})
+                messages.append({"role": "user", "parts": f"I: {utterance.msg}"})
             else:
                 if utterance.spk == 0:
-                    messages.append({"role": "user", "content": f"A: {utterance.msg}"})
+                    messages.append({"role": "user", "parts": f"A: {utterance.msg}"})
                 else:
-                    messages.append({"role": "user", "content": f"B: {utterance.msg}"})
+                    messages.append({"role": "user", "parts": f"B: {utterance.msg}"})
         
         try:
-            completion = await self.client.chat.completions.create(
-                model=self.model_name,
-                messages=messages,
-                temperature=0.7,
-                max_tokens=4000
-            )
+            completion = self.model.generate_content(messages)
+
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error calling OpenAI API: {str(e)}")
 
-        content = completion.choices[0].message.content.strip()
+        content = completion.text
 
         # Remove any leading/trailing markdown code fences
         content = re.sub(r'^```json\n|```$', '', content)
