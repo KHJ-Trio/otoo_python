@@ -1,0 +1,4 @@
+.env
+__pycache__/
+kakao_size.txt
+long_kakao.txt
