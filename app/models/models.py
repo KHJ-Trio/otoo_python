@@ -143,7 +143,7 @@ class ChatbotModel:
                     "role": "user",
                     "parts": [content]
                 })
-            elif role == 'assistant':
+            elif role == 'model':
                 print('here')
                 messages.append({
                     "role": "model",
