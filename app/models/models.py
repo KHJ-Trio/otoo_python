@@ -46,6 +46,7 @@ class EmotionReportModel:
                 | StrOutputParser()
             )
             question = messages
+            print('question',question)
             response = chain.invoke(question)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error calling API: {str(e)}")
@@ -136,12 +137,14 @@ class ChatbotModel:
         ]
         for message in recent_messages:
             role, content = message.split(" : ", 1)
+            print(f"message :{message}, role :{role}, content :{content}")
             if role == 'user':
                 messages.append({
                     "role": "user",
                     "parts": [content]
                 })
-            elif role == 'model':
+            elif role == 'assistant':
+                print('here')
                 messages.append({
                     "role": "model",
                     "parts": [content]
