@@ -112,7 +112,10 @@ class STTModel:
                     messages.append({"role": "user", "parts": f"B: {utterance.msg}"})
         
         try:
-            model = genai.GenerativeModel(self.model_name)
+            model = genai.GenerativeModel(self.model_name,
+                                          generation_config = genai.GenerationConfig(
+                                          temperature=0.1,
+                                          ))
             response = model.generate_content(messages)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error calling Google Gemini API: {str(e)}")
