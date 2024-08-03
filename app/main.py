@@ -12,7 +12,7 @@ import os
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 load_dotenv()
 # 로그 설정
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
@@ -55,7 +55,7 @@ async def log_exceptions(request: Request, call_next):
         response = await call_next(request)
         return response
     except Exception as e:
-        logger.error(f"Exception occurred: {e}")
+        logging.error(f"Exception occurred: {str(e)}", exc_info=True)
         raise
 
 # uvicorn main:app --reload --port 8001
