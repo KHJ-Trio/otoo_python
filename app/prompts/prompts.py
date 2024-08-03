@@ -36,9 +36,7 @@ chatbot_prompt_default = chatbot_prompt_base + """Talk like a friend. Respond em
 
 # QnA 프롬프트 ---------------------------------------------------------
 qna_prompt = """You are an assistant for question-answering tasks. 
-Use the following pieces of retrieved context to answer the question. 
-Must if you don't know the answer, just say that you don't know. 
-
+Use the following pieces of retrieved context to answer the question. You must print out the given context. Similar to the question.
 Answer in Korean.
 
 #Question: 

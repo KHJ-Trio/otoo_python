@@ -35,8 +35,8 @@ class EmotionReportModel:
             embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
             loaded_vectorstore = FAISS.load_local("faiss/emotion_index", embeddings, allow_dangerous_deserialization=True)
             retriever = loaded_vectorstore.as_retriever()
-            llm = ChatGoogleGenerativeAI(model="gemini-pro",
-                             convert_system_message_to_human=True, google_api_key= api_key)
+            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",
+                             convert_system_message_to_human=True)
             prompt = PromptTemplate.from_template(emotion_report_prompt)
             # 체인 설정
             chain = (
@@ -46,9 +46,10 @@ class EmotionReportModel:
                 | StrOutputParser()
             )
             question = messages
+            print('question',question)
             response = chain.invoke(question)
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error calling OpenAI API: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error calling API: {str(e)}")
         return response
 class QnaModel:
     def __init__(self, api_key):
@@ -136,14 +137,16 @@ class ChatbotModel:
         ]
         for message in recent_messages:
             role, content = message.split(" : ", 1)
+            print(f"message :{message}, role :{role}, content :{content}")
             if role == 'user':
                 messages.append({
                     "role": "user",
                     "parts": [content]
                 })
             elif role == 'assistant':
+                print('here')
                 messages.append({
-                    "role": "assistant",
+                    "role": "model",
                     "parts": [content]
                 })
         try:
