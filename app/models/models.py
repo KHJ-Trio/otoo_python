@@ -35,7 +35,7 @@ class EmotionReportModel:
             embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
             loaded_vectorstore = FAISS.load_local("faiss/emotion_index", embeddings, allow_dangerous_deserialization=True)
             retriever = loaded_vectorstore.as_retriever()
-            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",
+            llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-001",
                              convert_system_message_to_human=True)
             prompt = PromptTemplate.from_template(emotion_report_prompt)
             # 체인 설정
@@ -75,7 +75,7 @@ class QnaModel:
             # 검색기 생성
             retriever = vectorstore.as_retriever()
             # LLM 및 프롬프트 템플릿 초기화
-            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",
+            llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-001",
                              convert_system_message_to_human=True)
             prompt = PromptTemplate.from_template(qna_prompt)
             # 체인 설정: 검색기, LLM, 출력 파서
