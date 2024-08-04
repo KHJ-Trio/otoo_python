@@ -98,7 +98,6 @@ Participants:
 7. Assign appropriate and witty nicknames to each participant based on the context of the conversation.
    - The nickname should clearly reflect the behavior, personality, or role of each participant in the conversation.
    - Ensure the nickname is clever, inoffensive, and suitable for a professional setting.
-   - Provide a brief explanation for each nickname.
    
 ## Format json
 {
@@ -356,7 +355,6 @@ There might be inconsistencies in speaker diarization. Use the context and conte
 7. Assign appropriate and witty nicknames to each participant based on the context of the conversation.
    - The nickname should clearly reflect the behavior, personality, or role of each participant in the conversation.
    - Ensure the nickname is clever, inoffensive, and suitable for a professional setting.
-   - Provide a brief explanation for each nickname.
    
 ## Format json
 {
@@ -478,7 +476,6 @@ Participants:
 7. Assign appropriate and witty nicknames to each participant based on the context of the conversation.
    - The nickname should clearly reflect the behavior, personality, or role of each participant in the conversation.
    - Ensure the nickname is clever, inoffensive, and suitable for a professional setting.
-   - Provide a brief explanation for each nickname.
 
 ## Format json
 {
