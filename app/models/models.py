@@ -19,6 +19,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from pymongo import MongoClient
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores.utils import DistanceStrategy
 load_dotenv()
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
@@ -67,10 +69,15 @@ class QnaModel:
             documents = list(collection.find({}, {'_id': 0, 'content': 1, 'embedding': 1}))
             documents = [Document(page_content=doc["content"], embedding=doc["embedding"]) for doc in documents]
             # FAISS에 임베딩 데이터 로드
-            embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+            embeddings = HuggingFaceEmbeddings(
+                model_name='snunlp/KR-SBERT-V40K-klueNLI-augSTS',
+                model_kwargs={'device':'cpu'},
+                encode_kwargs={'normalize_embeddings':True},
+            )
             vectorstore = FAISS.from_documents(
                 documents=documents,
-                embedding=embeddings
+                embedding=embeddings,
+                distance_strategy = DistanceStrategy.COSINE
             )
             # 검색기 생성
             retriever = vectorstore.as_retriever()
